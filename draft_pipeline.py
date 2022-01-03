@@ -101,7 +101,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
                     if column[6] != "PASS":
                         reoutput_file.write(line)
 
-                line = denfvcf.readline()
+                line = denfvcf_file.readline()
             reoutput_file.close()
             denfvcf_file.close()
 
