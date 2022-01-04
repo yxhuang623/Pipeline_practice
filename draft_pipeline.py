@@ -13,35 +13,33 @@ for SRRnumber in sralist:
     os.system(command3)
 
 # Path to the reference
-referencepath = "/home/yixiao/pipeline-practice/reference/"
-os.system("cd /home/yixiao/pipeline-practice")
+referencepath = "/home/yixiao/pipeline-practice/reference/P125109.fasta"
 # Create index file for reference
 os.system("bwa index " + referencepath)
 
 # Path to samples
-os.system("cd /home/yixiao/pipeline-practice/samples")
+#os.system("cd /home/yixiao/pipeline-practice/samples")
 
 # Alignment using BWA
+#i = 1
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     fastqpath = []
     sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
     sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
     #sample_folder_pathlist.append(sample_folderpath)
-    with open(sampleDirectories, 'w') as txtfile:
-        txtfile.write(sample_folderpath + "\n")
-    txtfile.close()
+    SD_file = open(sampleDirectories, 'w')
+    SD_file.write(sample_folderpath + "\n")
+    SD_file.close()
 
     if (sample_folder.startswith(".")):
         continue
     else:
         for file in os.listdir(sample_folderpath):
-            if (file.startswith(".")):
-                continue
-            else:
+            if (file.endswith(".fastq")):
                 fastqpath.append(sample_folderpath + "/" + file.__str__())
         print(fastqpath)
         output_name = sample_folderpath + "/reads.sam"
-        
+        #i += 1
         # Alignment
         command = "bwa mem /home/yixiao/pipeline-practice/reference/ " + \
               fastqpath[0] + " " + fastqpath[1] + " > " + output_name
@@ -50,82 +48,72 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
 # Call SNPs
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
-    for samfile in os.listdir(sample_folderpath):
-        if (samfile.endswith(".sam")):
-            bam_name = "YX.unsortedreads.bam"
+    bam_name = sample_folderpath + "/YX.unsortedreads.bam"
+    command = "samtools view -o " + bam_name + " " + sample_folderpath + "/reads.sam"
+    os.system(command)
 
-            # Convert sam to bam
-            command = "samtools view -o " + bam_name + " " + samfile.__str__()
-            os.system(command)
+    # Sort bam
+    sorted_name = sample_folderpath + "/YX.sortedreads.bam"
+    os.system("samtools sort " + bam_name + " -o " + sorted_name)
 
-            # Sort bam
-            sorted_name = "YX.sortedreads.bam"
-            os.system("samtools sort " + bam_name + " -o " + sorted_name)
+    # Generate raw vcf files
+    vcf_file_name = sample_folderpath + "/YX.raw.vcf"
+    command = "gatk HaplotypeCaller -R " + referencepath + " -I " + sorted_name + \
+              " --minimum-mapping-quality 30 -O " + vcf_file_name
+    os.system(command)
 
-            # Remove duplicate reads
-            dup_name = "YX.dedupreads.bam"
-            Mdup_name = "marked_dup_metrics.txt"
-            command = "picard MarkDuplicates I=" + sorted_name + " O=" + dup_name + " M=" + Mdup_name
-            os.system(command)
+    # Snp filter - gatk VariantFiltration - remove dense regions
+    filter_vcf_output_name = "YX.filter.vcf"
 
-            # Call variants by gatk Haplotypecaller
-            vcf_file_name = "YX.raw.vcf"
-            command = "gatk HaplotypeCaller -R " + referencepath + " -I " + dup_name + \
-                      " --minimum-mapping-quality 30 -O " + vcf_file_name
-            os.system(command)
+    command = 'Gatk VariantFiltration -R  ' + referencepath + \
+              '-cluster 3 -window 10 -V ' \
+              + vcf_file_name + ' -O ' + filter_vcf_output_name
+    os.system(command)
 
-            # Snp filter - gatk VariantFiltration - remove dense regions
-            filter_vcf_output_name = "YX.filter.vcf"
+    # Remove dense regions - Extract VCF with only "PASS"
+    PASS_vcf_output_name = "YX.PASS.vcf"
+    reoutput_file = open(PASS_vcf_output_name, 'w')
+    denfvcf_file = open(filter_vcf_output_name, 'r')
+    line = denfvcf_file.readline()
+    while (line):
+        if (line[0] == "#"):
+            reoutput_file.write(line)
+        elif (line[0] != "#"):
+            column = line.split("\t")
+            if column[6] != "PASS":
+                reoutput_file.write(line)
 
-            command = 'Gatk VariantFiltration -R  ' + referencepath + \
-                      '-cluster 3 -window 10 -V ' \
-                      + vcf_file_name + ' -O ' + filter_vcf_output_name
-            os.system(command)
+        line = denfvcf_file.readline()
+    reoutput_file.close()
+    denfvcf_file.close()
 
-            # Remove dense regions - Extract VCF with only "PASS"
-            PASS_vcf_output_name = "YX.PASS.vcf"
-            reoutput_file = open(PASS_vcf_output_name, 'w')
-            denfvcf_file = open(filter_vcf_output_name, 'r')
-            line = denfvcf_file.readline()
-            while (line):
-                if (line[0] == "#"):
-                    reoutput_file.write(line)
-                elif (line[0] != "#"):
-                    column = line.split("\t")
-                    if column[6] != "PASS":
-                        reoutput_file.write(line)
+    # Mark those failed-pass sites
+    refilter_vcf_output_name = "YX.refilter.vcf"
+    command = 'Gatk VariantFiltration -R ' + referencepath \
+              + '-V ' + PASS_vcf_output_name + ' -O ' + refilter_vcf_output_name \
+              + '--filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || ADF < 2 || ADR < 2"'
 
-                line = denfvcf_file.readline()
-            reoutput_file.close()
-            denfvcf_file.close()
+    os.system(command)
 
-            # Mark those failed-pass sites
-            refilter_vcf_output_name = "YX.refilter.vcf"
-            command = 'Gatk VariantFiltration -R ' + referencepath \
-                      + '-V ' + PASS_vcf_output_name + ' -O ' + refilter_vcf_output_name \
-                      + '--filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || ADF < 2 || ADR < 2"'
+    # Replace the bases in those failed-pass sites with "N"
+    remarked_file = "YX.remarked.vcf"
+    remarkedoutput_file = open(remarked_file, 'w')
+    markedvcf_file = open(refilter_vcf_output_name, 'r')
+    line = markedvcf_file.readline()
+    while (line):
+        if (line[0] == "#"):
+            remarkedoutput_file.write(line)
+        elif (line[0] != "#"):
+            column = line.split("\t")
+            if column[6] != "PASS":
+                line = line.replace(column[4], 'N')
+                remarkedoutput_file.write(line)
+            else:
+                remarkedoutput_file.write(line)
+        line = markedvcf_file.readline()
 
-            os.system(command)
-
-            # Replace the bases in those failed-pass sites with "N"
-            remarked_file = "YX.remarked.vcf"
-            remarkedoutput_file = open(remarked_file, 'w')
-            markedvcf_file = open(refilter_vcf_output_name, 'r')
-            line = markedvcf_file.readline()
-            while (line):
-                if (line[0] == "#"):
-                    remarkedoutput_file.write(line)
-                elif (line[0] != "#"):
-                    column = line.split("\t")
-                    if column[6] != "PASS":
-                        line = line.replace(column[4], 'N')
-                        remarkedoutput_file.write(line)
-                    else:
-                        remarkedoutput_file.write(line)
-                line = markedvcf_file.readline()
-
-            remarkedoutput_file.close()
-            markedvcf_file.close()
+    remarkedoutput_file.close()
+    markedvcf_file.close()
 
 # Create a single merged snplist.txt file with all remarked-VCFs
 command = "cfsan_snp_pipeline merge_sites -n YX.remarked.vcf -o " \
@@ -189,6 +177,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
                     pseudo_seq_list.append(token[4])
                 coresnpline = coresnp_file.readline()
             pseudo_seq_str = ''.join(pseudo_seq_list)
+
             # Write the title and pseudo_sequence into fasta file
             pse_output_name = sample_folderpath + "pseudoseq.fasta"
             pse_output_file = open(pse_output_name, "w")
@@ -302,4 +291,28 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
                     '--filter-expression "ADF < 2 || ADR < 2" --filter-name "ADFRffilter"' \
                     + ' -O ' + refilter_vcf_output_name
         os.system(command)
+        
+            for samfile in os.listdir(sample_folderpath):
+        if (samfile.endswith(".sam")):
+            bam_name = "YX.unsortedreads.bam"
+
+            # Convert sam to bam
+            command = "samtools view -o " + bam_name + " " + samfile.__str__()
+            os.system(command)
+
+            # Sort bam
+            sorted_name = "YX.sortedreads.bam"
+            os.system("samtools sort " + bam_name + " -o " + sorted_name)
+
+            # Remove duplicate reads
+            dup_name = "YX.dedupreads.bam"
+            Mdup_name = "marked_dup_metrics.txt"
+            command = "picard MarkDuplicates I=" + sorted_name + " O=" + dup_name + " M=" + Mdup_name
+            os.system(command)
+
+            # Call variants by gatk Haplotypecaller
+            vcf_file_name = "YX.raw.vcf"
+            command = "gatk HaplotypeCaller -R " + referencepath + " -I " + dup_name + \
+                      " --minimum-mapping-quality 30 -O " + vcf_file_name
+            os.system(command)
 '''
