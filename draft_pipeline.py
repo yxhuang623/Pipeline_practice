@@ -45,6 +45,11 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
 SD_file.close()
 
 # Call SNPs
+# Creating the fasta index file
+os.system("samtools faidx " + referencepath)
+# Creating the FASTA sequence dictionary file
+os.system("gatk CreateSequenceDictionary -R " + referencepath)
+
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
     bam_name = sample_folderpath + "/YX.unsortedreads.bam"
@@ -55,9 +60,18 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     sorted_name = sample_folderpath + "/YX.sortedreads.bam"
     os.system("samtools sort " + bam_name + " -o " + sorted_name)
 
+    # Add @RG to BAM file
+    sorted_name = sample_folderpath + "/YX.sortedreads.bam"
+    RGsorted_name = sample_folderpath + "/RGsortedreads.bam"
+    command = "gatk AddOrReplaceReadGroups I=" + sorted_name + " O=" + RGsorted_name + \
+              " RGID=4 RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM=20"
+    os.system(command)
+
+    # Samtools index
+    os.system("samtools index " + RGsorted_name)
     # Generate raw vcf files
     vcf_file_name = sample_folderpath + "/YX.raw.vcf"
-    command = "gatk HaplotypeCaller -R " + referencepath + " -I " + sorted_name + \
+    command = "gatk HaplotypeCaller -R " + referencepath + " -I " + RGsorted_name + \
               " --minimum-mapping-quality 30 -O " + vcf_file_name
     os.system(command)
 
