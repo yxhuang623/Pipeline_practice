@@ -78,13 +78,13 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     # Snp filter - gatk VariantFiltration - remove dense regions
     filter_vcf_output_name = "YX.filter.vcf"
 
-    command = 'Gatk VariantFiltration -R  ' + referencepath + \
+    command = 'gatk VariantFiltration -R  ' + referencepath + \
               '-cluster 3 -window 10 -V ' \
               + vcf_file_name + ' -O ' + filter_vcf_output_name
     os.system(command)
 
     # Remove dense regions - Extract VCF with only "PASS"
-    PASS_vcf_output_name = "YX.PASS.vcf"
+    PASS_vcf_output_name = sample_folderpath + "/YX.PASS.vcf"
     reoutput_file = open(PASS_vcf_output_name, 'w')
     denfvcf_file = open(filter_vcf_output_name, 'r')
     line = denfvcf_file.readline()
@@ -93,7 +93,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
             reoutput_file.write(line)
         elif (line[0] != "#"):
             column = line.split("\t")
-            if column[6] != "PASS":
+            if column[6] == "PASS":
                 reoutput_file.write(line)
 
         line = denfvcf_file.readline()
@@ -101,15 +101,15 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     denfvcf_file.close()
 
     # Mark those failed-pass sites
-    refilter_vcf_output_name = "YX.refilter.vcf"
-    command = 'Gatk VariantFiltration -R ' + referencepath \
-              + '-V ' + PASS_vcf_output_name + ' -O ' + refilter_vcf_output_name \
-              + '--filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || ADF < 2 || ADR < 2"'
+    refilter_vcf_output_name = sample_folderpath + "/YX.refilter.vcf"
+    command = 'gatk VariantFiltration -R ' + referencepath \
+              + ' -V ' + PASS_vcf_output_name + ' -O ' + refilter_vcf_output_name \
+              + ' --filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || ADF < 2 || ADR < 2"'
 
     os.system(command)
 
     # Replace the bases in those failed-pass sites with "N"
-    remarked_file = "YX.remarked.vcf"
+    remarked_file = sample_folderpath + "/YX.remarked.vcf"
     remarkedoutput_file = open(remarked_file, 'w')
     markedvcf_file = open(refilter_vcf_output_name, 'r')
     line = markedvcf_file.readline()
