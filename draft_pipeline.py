@@ -1,9 +1,6 @@
 import os
 import codecs
 
-# Activate the environment of gatk4
-os.system("conda activate gatk4")
-
 # Download raw reads using sratoolkits
 sranumber = open("/home/yixiao/fullSraAccList.txt")
 sralist = list(sranumber)
