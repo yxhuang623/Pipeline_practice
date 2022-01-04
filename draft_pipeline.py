@@ -5,16 +5,14 @@ import codecs
 os.system("conda activate gatk4")
 
 # Download raw reads using sratoolkits
-sranumber = open("/home/yixiao/SraAccList.txt")
+sranumber = open("/home/yixiao/fullSraAccList.txt")
 sralist = list(sranumber)
-#fsralist = list(x.strip() for x in sralist)
 for SRRnumber in sralist:
+    SRRnumber = SRRnumber[0:10]
     os.system("cd /home/yixiao/pipeline-practice/samples")
-    command1 = "prefetch " + SRRnumber.__str__()
+    command1 = "prefetch " + SRRnumber + " -O /home/yixiao/pipeline-practice/samples"
     os.system(command1)
-    command2 = "cd /home/yixiao/pipeline-practice/samples/" + SRRnumber.__str__()
-    os.system(command2)
-    command3 = "fasterq-dump -S " + SRRnumber.__str__()
+    command3 = "fasterq-dump -S " + SRRnumber + " -O /home/yixiao/pipeline-practice/samples/" + SRRnumber
     os.system(command3)
 
 # Path to the reference
