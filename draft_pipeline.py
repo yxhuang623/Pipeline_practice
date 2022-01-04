@@ -25,7 +25,6 @@ os.system("bwa index " + referencepath)
 os.system("cd /home/yixiao/pipeline-practice/samples")
 
 # Alignment using BWA
-i = 1
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     fastqpath = []
     sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
@@ -45,7 +44,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
                 fastqpath.append(sample_folderpath + "/" + file.__str__())
         print(fastqpath)
         output_name = sample_folderpath + "/reads.sam"
-        i += 1
+        
         # Alignment
         command = "bwa mem /home/yixiao/pipeline-practice/reference/ " + \
               fastqpath[0] + " " + fastqpath[1] + " > " + output_name
