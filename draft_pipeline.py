@@ -22,14 +22,12 @@ os.system("bwa index " + referencepath)
 
 # Alignment using BWA
 #i = 1
+sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
+SD_file = open(sampleDirectories, 'w')
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     fastqpath = []
-    sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
     sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
-    #sample_folder_pathlist.append(sample_folderpath)
-    SD_file = open(sampleDirectories, 'w')
     SD_file.write(sample_folderpath + "\n")
-    SD_file.close()
 
     if (sample_folder.startswith(".")):
         continue
@@ -44,6 +42,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
         command = "bwa mem /home/yixiao/pipeline-practice/reference/ " + \
               fastqpath[0] + " " + fastqpath[1] + " > " + output_name
         os.system(command)
+SD_file.close()
 
 # Call SNPs
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
