@@ -80,10 +80,10 @@ for sample_folder in os.listdir(path + "/samples"):
         print(fastqpath)
 
         output_name = sample_folderpath + "/reads.sam"
-
+       
         # Alignment
-        command = "bwa mem ~/YXpipeline/reference/P125109.fasta " + \
-              fastqpath[0] + " " + fastqpath[1] + " > " + output_name
+        command = "bwa mem " + referencepath + " " + \
+                  fastqpath[0] + " " + fastqpath[1] + " > " + output_name
         os.system(command)
 
 SD_file.close()
