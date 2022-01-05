@@ -4,6 +4,10 @@ import codecs
 # Download raw reads using sratoolkits
 sranumber = open("/home/yixiao/fullSraAccList.txt")
 sralist = list(sranumber)
+# Obtain the total number of samples for further usage
+totalsample_numbers = len(sralist)
+print(totalsample_numbers)
+
 for SRRnumber in sralist:
     SRRnumber = SRRnumber[0:10]
     os.system("cd /home/yixiao/pipeline-practice/samples")
@@ -11,22 +15,22 @@ for SRRnumber in sralist:
     os.system(command1)
     command3 = "fasterq-dump -S " + SRRnumber + " -O /home/yixiao/pipeline-practice/samples/" + SRRnumber
     os.system(command3)
-
+    
 # Path to the reference
 referencepath = "/home/yixiao/pipeline-practice/reference/P125109.fasta"
 # Create index file for reference
 os.system("bwa index " + referencepath)
 
-# Path to samples
-#os.system("cd /home/yixiao/pipeline-practice/samples")
-
 # Alignment using BWA
-#i = 1
+# i = 1
 sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
 SD_file = open(sampleDirectories, 'w')
-for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
+for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
+    print(sample_folder)
     fastqpath = []
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
+    sample_folderpath = "/home/yixiao/pipeline-practice/test_samples/" + sample_folder.__str__()
+    print(sample_folderpath)
+    #sample_folder_pathlist.append(sample_folderpath)
     SD_file.write(sample_folderpath + "\n")
 
     if (sample_folder.startswith(".")):
@@ -37,11 +41,12 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
                 fastqpath.append(sample_folderpath + "/" + file.__str__())
         print(fastqpath)
         output_name = sample_folderpath + "/reads.sam"
-        #i += 1
+
         # Alignment
-        command = "bwa mem /home/yixiao/pipeline-practice/reference/ " + \
+        command = "bwa mem /home/yixiao/pipeline-practice/reference/P125109.fasta " + \
               fastqpath[0] + " " + fastqpath[1] + " > " + output_name
         os.system(command)
+
 SD_file.close()
 
 # Call SNPs
@@ -50,8 +55,8 @@ os.system("samtools faidx " + referencepath)
 # Creating the FASTA sequence dictionary file
 os.system("gatk CreateSequenceDictionary -R " + referencepath)
 
-for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
+for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
+    sample_folderpath = "/home/yixiao/pipeline-practice/test_samples/" + sample_folder
     bam_name = sample_folderpath + "/YX.unsortedreads.bam"
     command = "samtools view -o " + bam_name + " " + sample_folderpath + "/reads.sam"
     os.system(command)
@@ -143,7 +148,7 @@ listline = snplistfile.readline()
 
 while(listline):
     token = listline.split("\t")
-    if token[2] == "52":         #The number here is equal to the total number of samples
+    if token[2] == "3":         #The number here is equal to the total number of samples
         remarkedoutput_file.write(listline)
     listline = snplistfile.readline()
 
@@ -151,7 +156,7 @@ remarkedoutput_file.close()
 snplistfile.close()
 
 # Create a [list] containing all the core-genome sites
-fsnplistfile = codecs.open("/home/yixiao/pipeline-practice/output_files/snplist.txt", 'r')
+fsnplistfile = codecs.open("/home/yixiao/pipeline-practice/output_files/filteredsnplist.txt", 'r')
 snpsitsnumber = []
 flistline = fsnplistfile.readline()
 while flistline:
@@ -162,8 +167,8 @@ while flistline:
 fsnplistfile.close()
 
 # Remove the non-core-genome sites in vcf file of each sample
-for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
+for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
+    sample_folderpath = "/home/yixiao/pipeline-practice/test_samples/" + sample_folder
     for files in os.listdir(sample_folderpath):
         if (files.endswith(".remarked.vcf")):
             remarked_vcffile = open(sample_folderpath + "/YX.remarked.vcf", 'r')
@@ -188,7 +193,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
             while coresnpline:
                 if (coresnpline[0] != "#"):
                     token = coresnpline.split("\t")
-                    pseudo_seq_list.append(token[4])
+                    pseudo_seq_list.append(token[4][-1:])
                 coresnpline = coresnp_file.readline()
             pseudo_seq_str = ''.join(pseudo_seq_list)
 
@@ -201,8 +206,8 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
 
 # Create snp 'matrix' --combine files of consensus.fasta into single fasta file
 pseq_list = []
-for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
+for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
+    sample_folderpath = "/home/yixiao/pipeline-practice/test_samples/" + sample_folder
     print(sample_folderpath)
     snpma_output_file = "/home/yixiao/pipeline-practice/output_files/snpmatrix.fasta"
     opsnpma_output_file = open(snpma_output_file, "w")
@@ -223,5 +228,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     opsnpma_output_file.close()
 
     # Create snp distance matrix by snp-dists
-    command = "snp-dists" + snpma_output_file + " > /home/yixiao/pipeline-practice/output_files/snpmatrix.tsv"
+    command = "snp-dists /home/yixiao/pipeline-practice/output_files/snpmatrix.fasta > " \
+              "/home/yixiao/pipeline-practice/output_files/snpmatrix.tsv"
     os.system(command)
+    
