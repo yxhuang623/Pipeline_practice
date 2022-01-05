@@ -8,7 +8,7 @@ os.system("mkdir ~/YXpipeline/samples")
 os.system("mkdir ~/YXpipeline/output_files")
 
 # Download raw reads using sratoolkits
-sranumber = open("~/SraAccList.txt")
+sranumber = open("SraAccList.txt")
 sralist = list(sranumber)
 # Obtain the total number of samples for further usage
 totalsample_numbers = len(sralist)
@@ -16,7 +16,6 @@ print(totalsample_numbers)
 
 for SRRnumber in sralist:
     SRRnumber = SRRnumber[0:10]
-    #os.system("cd /home/yixiao/pipeline-practice/samples")
     command1 = "prefetch " + SRRnumber + " -O ~/YXpipeline/samples"
     os.system(command1)
     command3 = "fasterq-dump -S " + SRRnumber + " -O ~/YXpipeline/samples/" + SRRnumber
@@ -175,8 +174,8 @@ while flistline:
 fsnplistfile.close()
 
 # Remove the non-core-genome sites in vcf file of each sample
-for sample_folder in os.listdir("~/YXpipeline/test_samples"):
-    sample_folderpath = "~/YXpipeline/test_samples/" + sample_folder
+for sample_folder in os.listdir("~/YXpipeline/samples"):
+    sample_folderpath = "~/YXpipeline/samples/" + sample_folder
     for files in os.listdir(sample_folderpath):
         if (files.endswith(".remarked.vcf")):
             remarked_vcffile = open(sample_folderpath + "/YX.remarked.vcf", 'r')
