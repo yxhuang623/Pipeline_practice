@@ -245,7 +245,7 @@ for sample_folder in os.listdir(path + "/samples"):
             # Write the title and pseudo_sequence into fasta file
             pse_output_name = sample_folderpath + "/pseudoseq.fasta"
             pse_output_file = open(pse_output_name, "w")
-            pse_output_file.write(">" + sample_folderpath[44:] + "\n")
+            pse_output_file.write(">" + sample_folderpath[32:] + "\n")
             pse_output_file.write(pseudo_seq_str+ "\n")
             pse_output_file.close()
 
