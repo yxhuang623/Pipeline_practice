@@ -81,8 +81,8 @@ for sample_folder in os.listdir("~/YXpipeline/samples"):
     #Removing(marking) duplicates with GATK
     dupsorted_name = sample_folderpath + "/dupsortedreads.bam"
     mdupsorted_name = sample_folderpath + "/dedup.metrics.txt"
-    command = "gatk MarkDuplicatesSpark -I " + RGsorted_name + " -O " + dupsorted_name + \
-              " -M " + mdupsorted_name
+    command = "gatk MarkDuplicates I=" + RGsorted_name + " O=" + dupsorted_name + \
+              " M=" + mdupsorted_name
     os.system(command)
 
     # Samtools index
