@@ -10,7 +10,6 @@ print(totalsample_numbers)
 
 for SRRnumber in sralist:
     SRRnumber = SRRnumber[0:10]
-    os.system("cd /home/yixiao/pipeline-practice/samples")
     command1 = "prefetch " + SRRnumber + " -O /home/yixiao/pipeline-practice/test_samples"
     os.system(command1)
     command3 = "fasterq-dump -S " + SRRnumber + " -O /home/yixiao/pipeline-practice/test_samples/" + SRRnumber
