@@ -26,7 +26,7 @@ sampleDirectories = "/home/yixiao/pipeline-practice/output_files/sampleDirectori
 SD_file = open(sampleDirectories, 'w')
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     fastqpath = []
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
+    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
     SD_file.write(sample_folderpath + "\n")
 
     if (sample_folder.startswith(".")):
@@ -51,7 +51,7 @@ os.system("samtools faidx " + referencepath)
 os.system("gatk CreateSequenceDictionary -R " + referencepath)
 
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
+    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
     bam_name = sample_folderpath + "/YX.unsortedreads.bam"
     command = "samtools view -o " + bam_name + " " + sample_folderpath + "/reads.sam"
     os.system(command)
@@ -76,10 +76,10 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     os.system(command)
 
     # Snp filter - gatk VariantFiltration - remove dense regions
-    filter_vcf_output_name = "YX.filter.vcf"
+    filter_vcf_output_name = sample_folderpath + "/YX.filter.vcf"
 
     command = 'gatk VariantFiltration -R  ' + referencepath + \
-              '-cluster 3 -window 10 -V ' \
+              ' -cluster 3 -window 10 -V ' \
               + vcf_file_name + ' -O ' + filter_vcf_output_name
     os.system(command)
 
@@ -131,7 +131,8 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
 # Create a single merged snplist.txt file with all remarked-VCFs
 command = "cfsan_snp_pipeline merge_sites -n YX.remarked.vcf -o " \
           "/home/yixiao/pipeline-practice/output_files/snplist.txt " \
-          "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt"
+          "/home/yixiao/pipeline-practice/output_files/sampleDirectories.txt " \
+          "/home/yixiao/pipeline-practice/output_files/filteredsampleDirectories.txt"
 os.system(command)
 
 # Find the sites belong to the core genome in snplist.txt
@@ -162,11 +163,11 @@ fsnplistfile.close()
 
 # Remove the non-core-genome sites in vcf file of each sample
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
+    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
     for files in os.listdir(sample_folderpath):
-        if (files.endswith("remarked.vcf")):
-            remarked_vcffile = open(files.__str__(), 'r')
-            coresnp = sample_folderpath + "coresnp.vcf"
+        if (files.endswith(".remarked.vcf")):
+            remarked_vcffile = open(sample_folderpath + "/YX.remarked.vcf", 'r')
+            coresnp = sample_folderpath + "/coresnp.vcf"
             coresnp_vcf = open(coresnp, "w")
             flistline = remarked_vcffile.readline()
             while (flistline):
@@ -192,33 +193,22 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
             pseudo_seq_str = ''.join(pseudo_seq_list)
 
             # Write the title and pseudo_sequence into fasta file
-            pse_output_name = sample_folderpath + "pseudoseq.fasta"
+            pse_output_name = sample_folderpath + "/pseudoseq.fasta"
             pse_output_file = open(pse_output_name, "w")
-            pse_output_file.write(">" + sample_folderpath[39:] + "\n")
+            pse_output_file.write(">" + sample_folderpath[44:] + "\n")
             pse_output_file.write(pseudo_seq_str+ "\n")
             pse_output_file.close()
 
-            # Change the title of pseudo-sequence for each sample
-            fasta = open(pse_output_name, "r")
-            newfa = sample_folderpath + "newpseudoseq.fasta"
-            newfasta = open(newfa, "w")
-            for line in fasta:
-                if line.startswith(">"):
-                    newfasta.write(sample_folderpath[39:] + "\n")
-                else:
-                    newfasta.write(line + "\n")
-            fasta.close()
-            newfasta.close()
-
 # Create snp 'matrix' --combine files of consensus.fasta into single fasta file
+pseq_list = []
 for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
-    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder.__str__()
+    sample_folderpath = "/home/yixiao/pipeline-practice/samples/" + sample_folder
+    print(sample_folderpath)
     snpma_output_file = "/home/yixiao/pipeline-practice/output_files/snpmatrix.fasta"
     opsnpma_output_file = open(snpma_output_file, "w")
-    pseq_list = []
-    for pseq_file in os.listdir(sample_folderpath):
-        if pseq_file.endswith("pseudoseq.fasta"):
-            pseq_list.append(sample_folderpath + pseq_file)
+
+    pseq_list.append(sample_folderpath + "/pseudoseq.fasta")
+    print(pseq_list)
 
     for pseq_file_path in pseq_list:
         input_file = open(pseq_file_path, "r")
@@ -235,97 +225,3 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/samples"):
     # Create snp distance matrix by snp-dists
     command = "snp-dists" + snpma_output_file + " > /home/yixiao/pipeline-practice/output_files/snpmatrix.tsv"
     os.system(command)
-
-'''
-        # Removing (marking) duplicates with GATK4
-        dup_name = sorted_name[:-4] + ".dedup.bam"
-        Mdup_name = sorted_name[:-4] + "marked_dup_metrics.txt"
-        command = "gatk MarkDuplicatesSpark -I " + sorted_name + " -O " + dup_name + " -M " + Mdup_name
-        os.system(command)        
-
-        # Generate pileup file
-        pileup_file_name = dup_name[:-4] + ".mpileup"
-        command = "samtools mpileup -f " + referencepath + "" + sorted_name + " >" + pileup_file_name
-        os.system(command)
-
-        # Varscan
-        vcf_file_name = pileup_file_name[:-4] + ".vcf"
-        command = "varscan mpileup2snp" + pileup_file_name + ">" + vcf_file_name + "--min-var-freq 0.90 --output-vcf 1"
-        os.system(command)
-
-        # Filter indels within 5bp by bcftools
-        filadjacent_file_name = vcf_file_name[:-4]+ ".fil.vcf"
-        command = "bcftools filter --IndelGap 5 " + vcf_file_name + " -0b -o " + filadjacent_file_name
-        os.system(command)
-        
-        # Filter parameters of DP, FREQ, ADF and ADR - MY own script
-        parafiltered_vcf = PASS_vcf_output_name[:-4] + ".filtered.vcf"
-        output_file = open("/home/yixiao/pipeline-practice/ " + parafiltered_vcf, 'w')
-        vcf_file = open("/home/yixiao/pipeline-practice/" + PASS_vcf_output_name, 'r')
-        line = vcf_file.readline()
-
-        while (line):
-            if (line[0] != "#"):
-                token = line.split("\t")
-                para_lst = token[9].split(":")
-                if token[4] != "." and len(para_lst) == 14 and para_lst[0] == "1/1" and int(
-                        para_lst[3]) >= 10 and float(para_lst[6][:-1]) >= 75 and int(
-                    para_lst[12]) >= 2 and int(para_lst[13]) >= 2:
-                    output_file.write(line)   
-                                                                     
-                else:
-                    line = line.replace(column[6], 'failed_pass')
-                    output_file.write(line)
-
-            line = vcf_file.readline()
-
-        output_file.close()
-        vcf_file.close()
-        
-         # Remove dense regions - Extract VCF with only "PASS"
-            PASS_vcf_output_name = "YX.PASS.vcf"
-            command = "bcftools view -f PASS " + filter_vcf_output_name + " > " + PASS_vcf_output_name
-            os.system(command)
-
-        #Output a new vcf file from the input vcf file that removes any indel sites
-        vcftools --vcf input_file.vcf --remove-indels --recode --recode-INFO-all --out SNPs_only
-                    
-        # Generate a single pseudo-sequence for each sample - gatk
-        pse_output_name = sample_folderpath + "pseudoseq.fasta"
-        command = "gatk FastaAlternateReferenceMaker -R " \
-                    + referencepath + " -O " + pse_output_name + " -V " + coresnp
-        os.system(command)
-        
-        # Mark those failed-pass sites
-        refilter_vcf_output_name = "YX.refilter.vcf"
-        command = 'Gatk VariantFiltration -R  ' + referencepath + '-V ' + PASS_vcf_output_name + \
-                    '--filter-expression "DP < 10" --filter-name "DPffilter" ' \
-                    '--filter-expression "AF < 0.75" --filter-name "AFffilter" ' \
-                    '--filter-expression "ADF < 2 || ADR < 2" --filter-name "ADFRffilter"' \
-                    + ' -O ' + refilter_vcf_output_name
-        os.system(command)
-        
-            for samfile in os.listdir(sample_folderpath):
-        if (samfile.endswith(".sam")):
-            bam_name = "YX.unsortedreads.bam"
-
-            # Convert sam to bam
-            command = "samtools view -o " + bam_name + " " + samfile.__str__()
-            os.system(command)
-
-            # Sort bam
-            sorted_name = "YX.sortedreads.bam"
-            os.system("samtools sort " + bam_name + " -o " + sorted_name)
-
-            # Remove duplicate reads
-            dup_name = "YX.dedupreads.bam"
-            Mdup_name = "marked_dup_metrics.txt"
-            command = "picard MarkDuplicates I=" + sorted_name + " O=" + dup_name + " M=" + Mdup_name
-            os.system(command)
-
-            # Call variants by gatk Haplotypecaller
-            vcf_file_name = "YX.raw.vcf"
-            command = "gatk HaplotypeCaller -R " + referencepath + " -I " + dup_name + \
-                      " --minimum-mapping-quality 30 -O " + vcf_file_name
-            os.system(command)
-'''
