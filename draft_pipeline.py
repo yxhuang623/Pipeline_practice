@@ -2,7 +2,7 @@ import os
 import codecs
 
 # Download raw reads using sratoolkits
-sranumber = open("/home/yixiao/fullSraAccList.txt")
+sranumber = open("/home/yixiao/SraAccList.txt")
 sralist = list(sranumber)
 # Obtain the total number of samples for further usage
 totalsample_numbers = len(sralist)
@@ -11,11 +11,11 @@ print(totalsample_numbers)
 for SRRnumber in sralist:
     SRRnumber = SRRnumber[0:10]
     os.system("cd /home/yixiao/pipeline-practice/samples")
-    command1 = "prefetch " + SRRnumber + " -O /home/yixiao/pipeline-practice/samples"
+    command1 = "prefetch " + SRRnumber + " -O /home/yixiao/pipeline-practice/test_samples"
     os.system(command1)
-    command3 = "fasterq-dump -S " + SRRnumber + " -O /home/yixiao/pipeline-practice/samples/" + SRRnumber
+    command3 = "fasterq-dump -S " + SRRnumber + " -O /home/yixiao/pipeline-practice/test_samples/" + SRRnumber
     os.system(command3)
-    
+
 # Path to the reference
 referencepath = "/home/yixiao/pipeline-practice/reference/P125109.fasta"
 # Create index file for reference
@@ -31,6 +31,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
     sample_folderpath = "/home/yixiao/pipeline-practice/test_samples/" + sample_folder.__str__()
     print(sample_folderpath)
     #sample_folder_pathlist.append(sample_folderpath)
+
     SD_file.write(sample_folderpath + "\n")
 
     if (sample_folder.startswith(".")):
@@ -40,6 +41,7 @@ for sample_folder in os.listdir("/home/yixiao/pipeline-practice/test_samples"):
             if (file.endswith(".fastq")):
                 fastqpath.append(sample_folderpath + "/" + file.__str__())
         print(fastqpath)
+
         output_name = sample_folderpath + "/reads.sam"
 
         # Alignment
@@ -148,7 +150,7 @@ listline = snplistfile.readline()
 
 while(listline):
     token = listline.split("\t")
-    if token[2] == "3":         #The number here is equal to the total number of samples
+    if token[2] == totalsample_numbers.__str__():         #The number here is equal to the total number of samples
         remarkedoutput_file.write(listline)
     listline = snplistfile.readline()
 
