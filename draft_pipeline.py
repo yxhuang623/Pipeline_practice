@@ -3,10 +3,9 @@ import codecs
 
 # Make directionaries to run this pipeline
 os.system("mkdir ~/YXpipeline")
-os.system("cd YXpipeline")
-os.system("mkdir reference")
-os.system("mkdir samples")
-os.system("mkdir output_files")
+os.system("mkdir ~/YXpipeline/reference")
+os.system("mkdir ~/YXpipeline/samples")
+os.system("mkdir ~/YXpipeline/output_files")
 
 # Download raw reads using sratoolkits
 sranumber = open("~/SraAccList.txt")
