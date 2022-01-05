@@ -71,19 +71,25 @@ for sample_folder in os.listdir("~/YXpipeline/samples"):
     # Sort bam
     sorted_name = sample_folderpath + "/YX.sortedreads.bam"
     os.system("samtools sort " + bam_name + " -o " + sorted_name)
-
+    
     # Add @RG to BAM file
-    sorted_name = sample_folderpath + "/YX.sortedreads.bam"
     RGsorted_name = sample_folderpath + "/RGsortedreads.bam"
     command = "gatk AddOrReplaceReadGroups I=" + sorted_name + " O=" + RGsorted_name + \
               " RGID=4 RGLB=lib1 RGPL=ILLUMINA RGPU=unit1 RGSM=20"
     os.system(command)
 
+    #Removing(marking) duplicates with GATK
+    dupsorted_name = sample_folderpath + "/dupsortedreads.bam"
+    mdupsorted_name = sample_folderpath + "/dedup.metrics.txt"
+    command = "gatk MarkDuplicatesSpark -I " + RGsorted_name + " -O " + dupsorted_name + \
+              " -M " + mdupsorted_name
+    os.system(command)
+
     # Samtools index
-    os.system("samtools index " + RGsorted_name)
+    os.system("samtools index " + dupsorted_name)
     # Generate raw vcf files
     vcf_file_name = sample_folderpath + "/YX.raw.vcf"
-    command = "gatk HaplotypeCaller -R " + referencepath + " -I " + RGsorted_name + \
+    command = "gatk HaplotypeCaller -R " + referencepath + " -I " + dupsorted_name + \
               " --minimum-mapping-quality 30 -O " + vcf_file_name
     os.system(command)
 
