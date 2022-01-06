@@ -165,7 +165,7 @@ for sample_folder in os.listdir(path + "/samples"):
         refilter_vcf_output_name = sample_folderpath + "/YX.refilter.vcf"
         command = 'gatk VariantFiltration -R ' + referencepath \
                   + ' -V ' + PASS_vcf_output_name + ' -O ' + refilter_vcf_output_name \
-                  + ' --filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || ADF < 2 || ADR < 2"'
+                  + ' --filter-name "MYfilter" --filter-expression "DP < 10 || AF < 0.75 || QD < 2"'
 
         os.system(command)
 
