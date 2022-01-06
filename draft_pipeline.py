@@ -122,7 +122,7 @@ for sample_folder in os.listdir(path + "/samples"):
     # Generate raw vcf files
     vcf_file_name = sample_folderpath + "/YX.raw.vcf"
     command = "gatk HaplotypeCaller -R " + referencepath + " -I " + dupsorted_name + \
-              " --minimum-mapping-quality 30 -O " + vcf_file_name
+              " --minimum-mapping-quality 30 --sample-ploidy 1 -O " + vcf_file_name
     os.system(command)
 
     # Snp filter - gatk VariantFiltration - remove dense regions
