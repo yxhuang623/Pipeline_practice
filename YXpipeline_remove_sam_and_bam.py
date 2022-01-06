@@ -75,18 +75,12 @@ for sample_folder in os.listdir(path + "/samples"):
     SD_file.write(sample_folderpath + "\n")
 SD_file.close()
 
-
 # Alignment using BWA
-sampleDirectories = path + "/output_files/sampleDirectories.txt"
-SD_file = open(sampleDirectories, 'w')
 for sample_folder in os.listdir(path + "/samples"):
     print(sample_folder)
     fastqpath = []
     sample_folderpath = path + "/samples/" + sample_folder.__str__()
     print(sample_folderpath)
-    #sample_folder_pathlist.append(sample_folderpath)
-
-    SD_file.write(sample_folderpath + "\n")
 
     if (sample_folder.startswith(".")):
         continue
@@ -200,7 +194,7 @@ command = "cfsan_snp_pipeline merge_sites -n YX.remarked.vcf -o " \
           "~/YXpipeline/output_files/filteredsampleDirectories.txt"
 os.system(command)
 
-# Find the sites belong to the core genome in snplist.txt
+# Keep the sites belong to the core genome in snplist.txt
 filteredsnplist = "filteredsnplist.txt"
 remarkedoutput_file = open(path + "/output_files/" + filteredsnplist, 'w')
 snplistfile = open(path + "/output_files/snplist.txt", 'r')
