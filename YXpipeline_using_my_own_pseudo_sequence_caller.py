@@ -228,12 +228,12 @@ for sample_folder in os.listdir(path + "/samples"):
     pse_output_file.write(pseudo_seq_str + "\n")
     pse_output_file.close()
 
-# Create snp 'matrix' --combine files of consensus.fasta into single fasta file
+# Create snp 'matrix' --combine files of pseudo.fasta into single fasta file
 pseq_list = []
 for sample_folder in os.listdir(path + "/samples"):
     sample_folderpath = path + "/samples/" + sample_folder
     print(sample_folderpath)
-    snpma_output_file = path + "/snpmatrix.fasta"
+    snpma_output_file = path + "/output_files/snpmatrix.fasta"
     opsnpma_output_file = open(snpma_output_file, "w")
     pseq_list.append(sample_folderpath + "/pseudo.fasta")
     print(pseq_list)
@@ -247,3 +247,6 @@ for sample_folder in os.listdir(path + "/samples"):
                 opsnpma_output_file.writelines(line)
             line = input_file.readline()
     opsnpma_output_file.close()
+    
+# Create relaxed phylip format to build the phylogenetic tree using snp_sites
+command = "snp-sites -p -o " + path + "/output_files/phylip.phylip" + " " + path + "/output_files/snpmatrix.fasta"
