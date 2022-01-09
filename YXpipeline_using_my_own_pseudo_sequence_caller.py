@@ -245,6 +245,3 @@ for sample_folder in os.listdir(path + "/samples"):
                 opsnpma_output_file.writelines(line)
             line = input_file.readline()
     opsnpma_output_file.close()
-
-
-
