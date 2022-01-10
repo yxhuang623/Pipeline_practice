@@ -31,3 +31,7 @@ Please create a new folder named "reference_file" in your current path and put y
 
 In this pipeline, high-quality SNPs are determined using the following criteria: Minimum variant allele frequency of 90%, Minimum base quality at a position to count a read of 15, Minimum read depth at a position to make a call of 8, variants with no more than 90% support on one strand. Only the high-quality SNPs will be used in the downstream analysis and the low-quality SNPs will be removed.
 
+
+# Outputfiles
+
+The mainly outputfiles include: multi FASTA alignment file, snp distance matrix file (.tls format), pseudo sequence of Reference (FASTA format, containing only the bases at core genome postions), Phylip file (optional).
