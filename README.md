@@ -7,6 +7,7 @@ This pipeline focuses on the closely-related pathogens, which means that it’s 
 
 The YXPipeline is completely written in Python. The code is designed to be easy to read and modified as necessary. The important parameters of used tools such as BWA and Varscan are able to be changed directly in the python script, depending on the input data sets.
 
+
 2.	Before running the pipeline
 
 2.1 Operating System Requirements
