@@ -268,7 +268,7 @@ for sample_folder in ordersample_folderpath:
 print(samplespath)
 ref_core_file = path + "/output_files/ref_core.fasta"
 ref_core_output_file = open(ref_core_file, "w")
-ref_core_writevcf = samplespath[1] + "/psuedo.vcf"
+ref_core_writevcf = samplespath[1] + "/pseudo.vcf"
 print(ref_core_writevcf)
 input_file = open(ref_core_writevcf, "r")
 line = input_file.readline()
