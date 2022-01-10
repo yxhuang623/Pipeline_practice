@@ -21,7 +21,7 @@ export CLASSPATH=~ /<varscan_version>/VarScan.jar:$CLASSPATH
 
 export PATH="~/<gatk_version>/:$PATH"
 
-## Notes to make sure the pipeline could work
+# Notes to make sure the pipeline could work
 
 Please download the python script named “YXpipeline” in Github and run the script directly in your command line.
 Please create a new folder named "reference_file" in your current path and put your ref file in this folder. Then run the YXpipeline python script in the same path in your command line.
