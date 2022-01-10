@@ -256,6 +256,36 @@ for sample_folder in ordersample_folderpath:
                 opsnpma_output_file.writelines(line)
             line = input_file.readline()
     opsnpma_output_file.close()
-    
+
+# Creating a single ref_pseudo sequence with all the core genome sites   
+samplespath = []
+ordersample_folderpath = os.listdir(path + "/samples")
+ordersample_folderpath.sort()
+print(ordersample_folderpath)
+for sample_folder in ordersample_folderpath:
+    sample_folderpath = path + "/samples/" + sample_folder
+    samplespath.append(sample_folderpath)
+print(samplespath)
+ref_core_file = path + "/output_files/ref_core.fasta"
+ref_core_output_file = open(ref_core_file, "w")
+ref_core_writevcf = samplespath[1] + "/psuedo.vcf"
+print(ref_core_writevcf)
+input_file = open(ref_core_writevcf, "r")
+line = input_file.readline()
+ref_core_list = []
+while (line):
+    column = line.split("\t")
+    ref_core_list.append(column[3])
+    line = input_file.readline()
+ref_core_str = ''.join(ref_core_list)
+ref_core_output_file.write(">Reference_pseudo" + "\n")
+ref_core_output_file.write(ref_core_str + "\n")
+input_file.close()
+ref_core_output_file.close()
+
+# Create snp distance matrix by snp-dists
+command = "snp-dists " + path + "/output_files/snpmatrix.fasta" + " > " + path + "/output_files/snpmatrix.tsv"
+os.system(command)
+
 # Create relaxed phylip format to build the phylogenetic tree using snp_sites- if needed
 #command = "snp-sites -p -o " + path + "/output_files/phylip.phylip" + " " + path + "/output_files/snpmatrix.fasta"
