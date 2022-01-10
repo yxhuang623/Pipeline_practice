@@ -248,5 +248,5 @@ for sample_folder in os.listdir(path + "/samples"):
             line = input_file.readline()
     opsnpma_output_file.close()
     
-# Create relaxed phylip format to build the phylogenetic tree using snp_sites
+# Create relaxed phylip format to build the phylogenetic tree using snp_sites- if needed
 command = "snp-sites -p -o " + path + "/output_files/phylip.phylip" + " " + path + "/output_files/snpmatrix.fasta"
