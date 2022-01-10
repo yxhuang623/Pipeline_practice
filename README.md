@@ -13,7 +13,7 @@ The YXPipeline is completely written in Python. The code is designed to be easy 
 The YXPipeline could run in a Linux environment, and it has been tested to work well on Ubuntu system.
 ## Executable Software Dependencies
 
-The software used in this pipeline include BWA, SAMtools, GATK4, VarScan. Please make sure that your operating system has the following software installed before running the YXPipeline.
+The software used in this pipeline include BWA, SAMtools, GATK4, VarScan. Please make sure that your operating system has those software installed before running the YXPipeline.
 
 ## Environment Variables
 
