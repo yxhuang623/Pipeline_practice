@@ -23,11 +23,11 @@ export PATH="~/<gatk_version>/:$PATH"
 
 # Notes to make sure the pipeline could work
 
-## 1
+## Python script
 Please download the python script named “YXpipeline” in Github and run the script directly in your command line.
-## 2
+## Download raw reads
 This pipeline is able to download the raw reads, if you wanna use this function, please put a textfile(.txt) which contain all the SRRnumbers of your sample sets (one SRRnumber per line) in your current path where you will run the script.
-## 3
+## Create a reference folder
 Please create a new folder named "reference_file" in your current path and put your ref file in this folder. Then run the YXpipeline python script in the same path in your command line.
 
 
