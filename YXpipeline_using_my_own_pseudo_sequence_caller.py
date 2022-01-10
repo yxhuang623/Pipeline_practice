@@ -235,7 +235,7 @@ for sample_folder in os.listdir(path + "/samples"):
     pse_output_file.write(pseudo_seq_str + "\n")
     pse_output_file.close()
 
-# Create snp 'matrix' --combine files of pseudo.fasta into single fasta file
+# Multi fasta alignment of core genome SNPs --Create snp 'matrix' --combine files of pseudo.fasta into single fasta file
 print("Create snp matrix fasta")
 pseq_list = []
 ordersample_folderpath = os.listdir(path + "/samples")
