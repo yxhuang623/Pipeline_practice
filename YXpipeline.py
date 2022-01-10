@@ -198,7 +198,7 @@ for sample_folder in os.listdir(path + "/samples"):
     varvcf.close()
     newvarvcf.close()
 
-    # Replace the ALT marked "." with REF base
+    # Replace the ALT marked "." with REF base --Generate the final pseudo-sequence vcf file for each sample
     print("Replacing the ALT with REF base when needed")
     prepsuedovcf = open(sample_folderpath + "/prepsuedo.vcf", 'r')
     pline = prepsuedovcf.readline()
@@ -215,7 +215,7 @@ for sample_folder in os.listdir(path + "/samples"):
     psuedovcf.close()
     prepsuedovcf.close()
 
-    # Generate the final pseudo-sequence vcf file for each sample
+    # Write the title and pseudo_sequence into fasta file
     print("Generating the final pseudo-sequence vcf file")
     psuedo_file = open(sample_folderpath + "/psuedo.vcf", "r")
     ppline = psuedo_file.readline()
@@ -226,8 +226,7 @@ for sample_folder in os.listdir(path + "/samples"):
         ppline = psuedo_file.readline()
     pseudo_seq_str = ''.join(pseudo_seq_list)
     psuedo_file.close()
-
-    # Write the title and pseudo_sequence into fasta file
+    
     print("Writing title and pseudo_sequence into fasta file")
     pse_output_name = sample_folderpath + "/pseudo.fasta"
     pse_output_file = open(pse_output_name, "w")
