@@ -171,10 +171,10 @@ for i in need_sites:
     if int(need_sites.count(i)) == totalsample_numbers:
         realsites.append(i)
 Rrealsites = list(set(realsites))
+Rrealsites.sort()
 print(Rrealsites)
 print("The length of  pseudo sequence will be:")
 print(len(Rrealsites))
-Rrealsites.sort()
 
 # Create pseudo-sequence which contains the core genome SNP sites for each sample
 print("Creating pseudo-sequence for each sample")
