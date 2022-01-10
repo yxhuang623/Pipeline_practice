@@ -187,7 +187,7 @@ for sample_folder in os.listdir(path + "/samples"):
     # Find the REF and ALT bases at SNP sites
     print("Finding the REF and ALT bases at SNP sites")
     varvcf = open(sample_folderpath + "/var.vcf", 'r')
-    newvarvcf = open(sample_folderpath + "/prepsuedo.vcf", 'w')
+    newvarvcf = open(sample_folderpath + "/prepseudo.vcf", 'w')
     vline = varvcf.readline()
     while (vline):
         if (vline[0] != "#"):
@@ -200,9 +200,9 @@ for sample_folder in os.listdir(path + "/samples"):
 
     # Replace the ALT marked "." with REF base --Generate the final pseudo-sequence vcf file for each sample
     print("Replacing the ALT with REF base when needed")
-    prepsuedovcf = open(sample_folderpath + "/prepsuedo.vcf", 'r')
+    prepsuedovcf = open(sample_folderpath + "/prepseudo.vcf", 'r')
     pline = prepsuedovcf.readline()
-    psuedovcf = open(sample_folderpath + "/psuedo.vcf", 'w')
+    psuedovcf = open(sample_folderpath + "/pseudo.vcf", 'w')
     while(pline):
         column = pline.split("\t")
         if column[4] == ".":
@@ -217,7 +217,7 @@ for sample_folder in os.listdir(path + "/samples"):
 
     # Write the title and pseudo_sequence into fasta file
     print("Generating the final pseudo-sequence vcf file")
-    psuedo_file = open(sample_folderpath + "/psuedo.vcf", "r")
+    psuedo_file = open(sample_folderpath + "/pseudo.vcf", "r")
     ppline = psuedo_file.readline()
     pseudo_seq_list = []
     while (ppline):
