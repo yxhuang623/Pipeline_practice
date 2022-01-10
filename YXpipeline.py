@@ -259,4 +259,4 @@ for sample_folder in ordersample_folderpath:
     opsnpma_output_file.close()
     
 # Create relaxed phylip format to build the phylogenetic tree using snp_sites- if needed
-command = "snp-sites -p -o " + path + "/output_files/phylip.phylip" + " " + path + "/output_files/snpmatrix.fasta"
+#command = "snp-sites -p -o " + path + "/output_files/phylip.phylip" + " " + path + "/output_files/snpmatrix.fasta"
