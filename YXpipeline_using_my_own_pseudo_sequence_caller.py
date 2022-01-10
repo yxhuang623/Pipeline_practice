@@ -126,7 +126,8 @@ for sample_folder in os.listdir(path + "/samples"):
         # Remove pileup file to save the storage
         #os.system("rm " + pileup_name)
 
-# Creat a list which contain all the SNP sites
+# Create a list which contain all the SNP sites
+print("Creating a list which contain all the SNP sites")
 rawsnpsitsnumber = []
 for sample_folder in os.listdir(path + "/samples"):
     print(sample_folder)
@@ -147,6 +148,7 @@ print(snpsitsnumber)
 print(len(snpsitsnumber))
 
 # Extract the core genome SNP sites
+print("Extracting the core genome SNP sites")
 need_sites =[]
 for sample_folder in os.listdir(path + "/samples"):
     print(sample_folder)
@@ -175,6 +177,7 @@ print(len(Rrealsites))
 Rrealsites.sort()
 
 # Create pseudo-sequence which contains the core genome SNP sites for each sample
+print("Creating pseudo-sequence for each sample")
 for sample_folder in os.listdir(path + "/samples"):
     print(sample_folder)
     willaddsites = []
@@ -182,6 +185,7 @@ for sample_folder in os.listdir(path + "/samples"):
     sample_folderpath = path + "/samples/" + sample_folder.__str__()
 
     # Find the REF and ALT bases at SNP sites
+    print("Finding the REF and ALT bases at SNP sites")
     varvcf = open(sample_folderpath + "/var.vcf", 'r')
     newvarvcf = open(sample_folderpath + "/prepsuedo.vcf", 'w')
     vline = varvcf.readline()
@@ -195,6 +199,7 @@ for sample_folder in os.listdir(path + "/samples"):
     newvarvcf.close()
 
     # Replace the ALT marked "." with REF base
+    print("Replacing the ALT with REF base when needed")
     prepsuedovcf = open(sample_folderpath + "/prepsuedo.vcf", 'r')
     pline = prepsuedovcf.readline()
     psuedovcf = open(sample_folderpath + "/psuedo.vcf", 'w')
@@ -211,6 +216,7 @@ for sample_folder in os.listdir(path + "/samples"):
     prepsuedovcf.close()
 
     # Generate the final pseudo-sequence vcf file for each sample
+    print("Generating the final pseudo-sequence vcf file")
     psuedo_file = open(sample_folderpath + "/psuedo.vcf", "r")
     ppline = psuedo_file.readline()
     pseudo_seq_list = []
@@ -222,6 +228,7 @@ for sample_folder in os.listdir(path + "/samples"):
     psuedo_file.close()
 
     # Write the title and pseudo_sequence into fasta file
+    print("Writing title and pseudo_sequence into fasta file")
     pse_output_name = sample_folderpath + "/pseudo.fasta"
     pse_output_file = open(pse_output_name, "w")
     pse_output_file.write(">" + sample_folderpath[32:] + "\n")
@@ -229,6 +236,7 @@ for sample_folder in os.listdir(path + "/samples"):
     pse_output_file.close()
 
 # Create snp 'matrix' --combine files of pseudo.fasta into single fasta file
+print("Create snp matrix fasta")
 pseq_list = []
 for sample_folder in os.listdir(path + "/samples"):
     sample_folderpath = path + "/samples/" + sample_folder
