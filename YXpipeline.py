@@ -1,6 +1,6 @@
 import os
 
-# Make working dir for this pipeline
+# Make working folder for this pipeline
 os.system("mkdir ~/YXpipeline")
 os.system("mkdir ~/YXpipeline/reference")
 os.system("mkdir ~/YXpipeline/samples")
