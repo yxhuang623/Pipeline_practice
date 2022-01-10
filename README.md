@@ -9,17 +9,21 @@ The YXPipeline is completely written in Python. The code is designed to be easy 
 
 # Before running the pipeline
 
-1. Operating System Requirements
+1.Operating System Requirements
+
 The YXPipeline could run in a Linux environment, and it has been tested to work well on Ubuntu system.
 
-2.	Executable Software Dependencies
+2.Executable Software Dependencies
+
 The software used in this pipeline include BWA, SAMtools, GATK4, VarScan. Please make sure that your operating system has the following software installed before running the YXPipeline.
 
-3.	Environment Variables
+3.Environment Variables
+
 export CLASSPATH=~ /<varscan_version>/VarScan.jar:$CLASSPATH
 export PATH="~/<gatk_version>/:$PATH"
 
-4.	Notes to make sure the pipeline could work
+4.Notes to make sure the pipeline could work
+
 Please download the python script named “YXpipeline” in Github and run the script directly in your command line.
 Please create a new folder named "reference_file" in your current path and put your ref file in this folder. Then run the YXpipeline python script in the same path.
 
