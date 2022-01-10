@@ -238,7 +238,9 @@ for sample_folder in os.listdir(path + "/samples"):
 # Create snp 'matrix' --combine files of pseudo.fasta into single fasta file
 print("Create snp matrix fasta")
 pseq_list = []
-for sample_folder in os.listdir(path + "/samples"):
+ordersample_folderpath = os.listdir(path + "/samples")
+ordersample_folderpath.sort()
+for sample_folder in ordersample_folderpath:
     sample_folderpath = path + "/samples/" + sample_folder
     print(sample_folderpath)
     snpma_output_file = path + "/output_files/snpmatrix.fasta"
