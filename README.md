@@ -20,6 +20,7 @@ The software used in this pipeline include BWA, SAMtools, GATK4, VarScan. Please
 3.Environment Variables
 
 export CLASSPATH=~ /<varscan_version>/VarScan.jar:$CLASSPATH
+
 export PATH="~/<gatk_version>/:$PATH"
 
 4.Notes to make sure the pipeline could work
