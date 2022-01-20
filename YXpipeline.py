@@ -15,7 +15,7 @@ print(totalsample_numbers)
 # Dowanload raw reads
 for SRRnumber in sralist:
     #SRRnumber = SRRnumber[0:10]
-    SRRnumber.replace("\n", "")
+    SRRnumber = SRRnumber.replace("\n", "")
     command1 = "prefetch " + SRRnumber + " -O ~/YXpipeline/samples"
     os.system(command1)
     command3 = "fasterq-dump -S " + SRRnumber + " -O ~/YXpipeline/samples/" + SRRnumber
