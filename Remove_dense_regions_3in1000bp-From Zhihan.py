@@ -1,6 +1,6 @@
 import os
 
-# filter window size: 3 in 1000
+# filter window size: 3 in 1000bp
 os.system("cd YXpipeline")
 path = os.path.abspath("YXpipeline")
 print(path)
