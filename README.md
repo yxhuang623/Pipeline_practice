@@ -33,7 +33,7 @@ Please create a new folder named "reference_file" in your current path and put y
 
 # High-quality SNPs
 
-In this pipeline, high-quality SNPs are determined using the following criteria: Minimum variant allele frequency of 90%, Minimum base quality at a position to count a read of 15, Minimum read depth at a position to make a call of 8, variants with no more than 90% support on one strand and a minimum Phred base score of 15. Besides, the adjacent SNP sites will be removed. Only the high-quality SNPs will be used in the downstream analysis.
+In this pipeline, high-quality SNPs are determined using the following criteria: Minimum variant allele frequency of 90%, Minimum base quality at a position to count a read of 15, Minimum read depth at a position to make a call of 8, variants with no more than 90% support on one strand and a minimum Phred base score of 15. Only the high-quality SNPs will be used in the downstream analysis (The adjacent SNP sites will be removed).
 
 
 # Outputfiles
