@@ -173,10 +173,10 @@ for i in need_sites:
 Rrealsites = list(set(realsites))
 Rrealsites.sort()
 print(Rrealsites)
-print("The length of  pseudo sequence will be:")
+print("The length of pseudo sequence:")
 print(len(Rrealsites))
 
-# Remove adjcent sites
+# Remove adjacent sites
 for i in Rrealsites:
     if (int(i)+1).__str__() in Rrealsites:
         print(i)
@@ -184,6 +184,8 @@ for i in Rrealsites:
         Rrealsites.remove(i)
         Rrealsites.remove((int(i)+1).__str__())
 print(Rrealsites)
+print("The length of pseudo sequence after removing adjacent sites:")
+print(len(Rrealsites))
 
 # Create pseudo-sequence which contains the core genome SNP sites for each sample
 print("Creating pseudo-sequence for each sample")
