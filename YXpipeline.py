@@ -184,6 +184,7 @@ for i in Rrealsites:
         Rrealsites.remove(i)
         Rrealsites.remove((int(i)+1).__str__())
 print(Rrealsites)
+Rrealsites.sort()
 print("The length of pseudo sequence after removing adjacent sites:")
 print(len(Rrealsites))
 
