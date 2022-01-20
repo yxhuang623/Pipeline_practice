@@ -1,5 +1,12 @@
 import os
 
+# Obtain the total number of samples for further usage
+sranumber = open("SraAccList.txt")
+sralist = list(sranumber)
+totalsample_numbers = len(sralist)
+print(totalsample_numbers)
+
+# Create path to the working place
 os.system("cd YXpipeline")
 path = os.path.abspath("YXpipeline")
 print(path)
@@ -27,7 +34,7 @@ print(len(rawsnpsitsnumber))
 
 realsites =[]
 for i in rawsnpsitsnumber:
-    if int(rawsnpsitsnumber.count(i)) == 52:
+    if int(rawsnpsitsnumber.count(i)) == totalsample_numbers:
         realsites.append(i)
 Rrealsites = list(set(realsites))
 print(Rrealsites)
