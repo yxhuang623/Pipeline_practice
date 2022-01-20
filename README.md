@@ -38,4 +38,4 @@ In this pipeline, high-quality SNPs are determined using the following criteria:
 
 # Outputfiles
 
-The mainly outputfiles include: multi FASTA alignment file, snp distance matrix file (.tsv format), pseudo sequence of Reference (FASTA format, containing the bases at core genome postions), Phylip file (optional).
+The mainly outputfiles include: multi FASTA alignment file, snp distance matrix file (.tsv format), pseudo sequence of Reference (FASTA format, containing the bases at core genome SNP postions), Phylip file (optional).
