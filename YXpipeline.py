@@ -181,8 +181,17 @@ for i in Rrealsites:
     if (int(i)+1).__str__() in Rrealsites:
         print(i)
         print((int(i)+1).__str__())
-        Rrealsites.remove(i)
         Rrealsites.remove((int(i)+1).__str__())
+        if (int(i)+2).__str__() in Rrealsites:
+            print((int(i)+2).__str__())
+            Rrealsites.remove((int(i) + 2).__str__())
+            if (int(i)+3).__str__() in Rrealsites:
+                print((int(i)+3).__str__())
+                Rrealsites.remove((int(i)+3).__str__())
+                if (int(i)+4).__str__() in Rrealsites:
+                    print((int(i)+4).__str__())
+                    Rrealsites.remove((int(i)+4).__str__())
+        Rrealsites.remove(i)
 print(Rrealsites)
 Rrealsites.sort()
 print("The length of pseudo sequence after removing adjacent sites:")
