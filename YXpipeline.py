@@ -176,6 +176,15 @@ print(Rrealsites)
 print("The length of  pseudo sequence will be:")
 print(len(Rrealsites))
 
+# Remove adjcent sites
+for i in Rrealsites:
+    if (int(i)+1).__str__() in Rrealsites:
+        print(i)
+        print((int(i)+1).__str__())
+        Rrealsites.remove(i)
+        Rrealsites.remove((int(i)+1).__str__())
+print(Rrealsites)
+
 # Create pseudo-sequence which contains the core genome SNP sites for each sample
 print("Creating pseudo-sequence for each sample")
 for sample_folder in os.listdir(path + "/samples"):
