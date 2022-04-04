@@ -64,7 +64,7 @@ for sample_folder in os.listdir(path + "/samples"):
     pileline = open_pilefile.readline()
     while (pileline):
         column = pileline.split("\t")
-        if int(column[3]) < 5:       # The least read depths is 5
+        if int(column[3]) < 7:       # The least read depths is 7
             rawsnpsitsnumber.append(column[1])
         pileline = open_pilefile.readline()
     open_pilefile.close()
@@ -88,7 +88,9 @@ core_genome_sites = list(set(wholesites) - set(Rremove_sites))
 core_genome_sites.sort()
 print("The total length of core genome sites is:")
 print(len(core_genome_sites))
-print("Create a txt file with all the core genome sites")
+print("The coverage of core genome sites on reference is:")
+print ("%.1f%%" % (len(core_genome_sites)/len(wholesites)*100))
+#print("Create a txt file with all the core genome sites")
 core_file = path + "/output_files/core_genome_sites.txt"
 ocore_file = open(core_file, "w")
 for i in core_genome_sites:
